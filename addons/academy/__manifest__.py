@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     'name': "Academy",
 
@@ -20,16 +19,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['website'],
+    'depends': ['website_sale'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml',
         'views/templates.xml',
+        'views/views.xml',
+        'data.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
 }
+# -*- coding: utf-8 -*-

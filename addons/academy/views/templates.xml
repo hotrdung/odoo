@@ -37,23 +37,15 @@
       </t>
     </template>
 
-    <!-- <template id="listing"> -->
-    <!--   <ul> -->
-    <!--     <li t-foreach="objects" t-as="object"> -->
-    <!--       <a t-attf-href="#{ root }/objects/#{ object.id }"> -->
-    <!--         <t t-esc="object.display_name"/> -->
-    <!--       </a> -->
-    <!--     </li> -->
-    <!--   </ul> -->
-    <!-- </template> -->
-    <!-- <template id="object"> -->
-    <!--   <h1><t t-esc="object.display_name"/></h1> -->
-    <!--   <dl> -->
-    <!--     <t t-foreach="object._fields" t-as="field"> -->
-    <!--       <dt><t t-esc="field"/></dt> -->
-    <!--       <dd><t t-esc="object[field]"/></dd> -->
-    <!--     </t> -->
-    <!--   </dl> -->
-    <!-- </template> -->
+    <template id="product_item_hide_no_price" inherit_id="website_sale.products_item">
+      <xpath expr="//div[hasclass('product_price')]/b" position="attributes">
+        <attribute name="t-if">product.price &gt; 0</attribute>
+      </xpath>
+    </template>
+
+    <record id="website_sale.products_categories" model="ir.ui.view">
+      <field name="active" eval="True"/>
+    </record>
+    
   </data>
 </odoo>
