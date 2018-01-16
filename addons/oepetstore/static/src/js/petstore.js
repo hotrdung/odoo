@@ -23,10 +23,16 @@ odoo.define('PetStoreHomePage', function (require) {
     });
 
     var HomePageWidget = Widget.extend({
-        //template: 'petstore.homepage',
+        template: 'HomePageTemplate',
+        init: function (parent) {
+            this._super(parent);
+            this.locale_name = "Vietnam";
+        },
         start: function () {
-            this.$el.append($('<div>').text('Welcome to Pet Store 333!'));
-            // console.log("xxx");
+            this.$el.append($('<div>').text('This is the draft of homepage!'));
+
+            console.log(this.$el);
+
             var my_object = new MySpanishClass("Pet Store");
             my_object.say_hello();
         }
