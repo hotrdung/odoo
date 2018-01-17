@@ -4,6 +4,7 @@ odoo.define('PetStoreHomePage', function (require) {
     var core = require('web.core');
     var rpc = require('web.rpc');
     var Widget = require('web.Widget');
+    var qweb = core.qweb;
 
     var ProductWidget = Widget.extend({
         template: "ProductsWidget",
@@ -57,17 +58,44 @@ odoo.define('PetStoreHomePage', function (require) {
             rpc.query({
                 model: 'oepetstore.message_of_the_day',
                 method: 'search_read',
-                args: [],
+                args: [],  // empty WHERE clause
                 kwargs: {},
                 fields: ["message"],
-                orderby: ['-create_date', '-id'],
-                limit: 1
+                orderBy: [
+                    {name: 'create_date', asc: false},
+                    {name: 'id', asc: false}
+                ],
+                limit: 1,
             }).then(function (results) {
+                console.log("Query results for MOTD", results);
+
                 var msg = results && results[0] && results[0].message;
                 self.$(".oe_mywidget_message_of_the_day").text(msg);
             });
         },
     });
+
+    var PetToysList = Widget.extend({
+        template: 'PetToysList',
+        start: function () {
+            var self = this;
+            return rpc.query({
+                model: 'product.product',
+                method: 'search_read',
+                args: [[['categ_id.name', '=', "Pet Toys"]]],  // WHERE clause: [[ [cond1], [cond2]... ]]
+                kwargs: {},
+                fields: ['name', 'image'],
+                limit: 5,
+            }).then(function (results) {
+                console.log("Query results for toys", results);
+
+                _(results).each(function (item) {
+                    self.$el.append(qweb.render('PetToy', {item: item}));
+                });
+            });
+        }
+    });
+
 
     var HomePageWidget = Widget.extend({
         template: 'HomePageTemplate',
@@ -89,6 +117,18 @@ odoo.define('PetStoreHomePage', function (require) {
                 self.$el.append("<div>Hello " + result["hello"] + "</div>");
             });
 
+            this.colorInput = new ColorInputWidget(this);
+            this.colorInput.on("change:color", this, this.color_changed);
+            this.colorInput.appendTo(this.$el);
+
+            var toyListWidget = new PetToysList(this);
+            var motdWidget = new MessageOfTheDay(this);
+
+            $.when(
+                toyListWidget.appendTo(this.$('.oe_petstore_homepage_left')),
+                motdWidget.appendTo(this.$('.oe_petstore_homepage_right'))
+            );
+
             var products = new ProductWidget(
                 this, ["cpu", "mouse", "keyboard", "graphic card", "screen"], "#00FF00");
             products.appendTo(this.$el);
@@ -96,13 +136,6 @@ odoo.define('PetStoreHomePage', function (require) {
             var confirmWidget = new ConfirmWidget(this);
             confirmWidget.on("user_chose", this, this.user_chose);
             confirmWidget.appendTo(this.$el);
-
-            this.colorInput = new ColorInputWidget(this);
-            this.colorInput.on("change:color", this, this.color_changed);
-            this.colorInput.appendTo(this.$el);
-
-            var motdWidget = new MessageOfTheDay(this);
-            motdWidget.appendTo(this.$el);
         },
         product_item_click: function (e) {
             console.log(e);
