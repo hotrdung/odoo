@@ -3,8 +3,12 @@ odoo.define('PetStoreHomePage', function (require) {
 
     var core = require('web.core');
     var rpc = require('web.rpc');
+
     var Widget = require('web.Widget');
     var qweb = core.qweb;
+
+    var AbstractField = require('web.AbstractField');
+    var field_registry = require('web.field_registry');
 
     var ProductWidget = Widget.extend({
         template: "ProductsWidget",
@@ -50,6 +54,22 @@ odoo.define('PetStoreHomePage', function (require) {
             this.set("color", color);
         },
     });
+
+    var FieldColor = AbstractField.extend({
+        events: _.extend({}, AbstractField.prototype.events, {
+            'change input': function (e) {
+                if (this.mode === 'edit') {
+                    console.log("Set value to " + $(e.currentTarget).val());
+                    this._setValue($(e.currentTarget).val());
+                }
+            }
+        }),
+        description: "",
+        _render: function () {
+            this.$el.html(qweb.render("FieldColor", {widget: this}));
+        },
+    });
+    field_registry.add('color', FieldColor);
 
     var MessageOfTheDay = Widget.extend({
         template: "MessageOfTheDay",

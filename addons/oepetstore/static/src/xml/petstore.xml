@@ -51,4 +51,15 @@
       <p><img t-att-src="'data:image/jpg;base64,'+item.image"/></p>
     </div>
   </t>
+
+  <t t-name="FieldColor">
+    <div class="oe_field_color">
+      <t t-if="widget.mode != 'edit'">
+        <div class="oe_field_color_content" t-attf-style="background-color: {{widget.value}}"/>
+      </t>
+      <t t-if="widget.mode == 'edit'">
+        <input type="color" t-att-value="widget.value"></input>
+      </t>
+    </div>
+  </t>
 </templates>
